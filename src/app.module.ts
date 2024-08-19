@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { GithubRssController } from './app.controller';
-import { AppService } from './app.service';
+import { GithubRssService } from './app.service';
 
 @Module({
         imports: [],
         controllers: [GithubRssController],
-        providers: [AppService],
+        providers: [GithubRssService],
 })
 
 export class AppModule {}
