@@ -1,8 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { GhRelease } from './ghrss/interfaces/gh.interface';
+import { GhRelease } from './interfaces/gh.interface';
 import * as util from "node:util"
 import axios from "axios"
 import { XMLParser, XMLBuilder, XMLValidator} from "fast-xml-parser";
+import { RssCache, RssCacheDocument } from './schemas/rsscache.schema';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
 
 interface req_data {
         username: string;
@@ -50,9 +53,13 @@ class githubRssReader {
 }
 
 @Injectable()
-export class GithubRssService {
+export class GhrssService {
+        constructor(@InjectModel(RssCache.name) private RssCacheModel: Model<RssCacheDocument>) {}
+
         public async getdata(username: string, reponame: string): Promise<GhRelease[]> {
                 let ghctx = new githubRssReader(username, reponame)
+                const createdAt = new this.RssCacheModel(ghctx);
+                createdAt.save()
                 return await ghctx.parse();
         }
 }
